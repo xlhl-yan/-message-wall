@@ -1,5 +1,5 @@
 <template>
-  <a-list item-layout="horizontal" :data-source="userList">
+  <a-list item-layout="horizontal" :data-source="props.userList">
     <template #renderItem="{ item }">
       <a-list-item>
         <a-card hoverable style="width: 240px">

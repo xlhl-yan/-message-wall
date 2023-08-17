@@ -13,7 +13,7 @@
         <ArticlePage :postList="postList" />
       </a-tab-pane>
       <a-tab-pane key="Picture" tab="图片">
-        <PictureList />
+        <PictureList :pictureList="pictureList" />
       </a-tab-pane>
       <a-tab-pane key="User" tab="用户">
         <UserList :userList="userList" />
@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect, ref } from "vue";
+import { watchEffect, ref, onMounted } from "vue";
 import ArticlePage from "@/components/ArticleList.vue";
 import UserList from "@/components/UserList.vue";
 import PictureList from "@/components/PictureList.vue";
@@ -33,6 +33,7 @@ import MyAxios from "@/plugins/MyAxios";
 
 const postList = ref([]);
 const userList = ref([]);
+const pictureList = ref([]);
 const router = useRouter();
 const route = useRoute();
 const activeKey = route.params.category;
@@ -42,28 +43,27 @@ const initSearchParams = {
   pageNumber: 1,
 };
 const searchParams = ref(initSearchParams);
-MyAxios.post("/post/list/page/vo", {
-  params: {
-    id: "1691380908365463553",
-  },
-}).then((res: any) => {
-  console.log(res);
-  postList.value = res.records;
-});
-MyAxios.post("/user/list/page/vo", {
-  // params: {
-  //   id: "1691380908365463553",
-  // },
-}).then((res: any) => {
-  console.log(res);
-  userList.value = res.records;
-});
 watchEffect(() => {
   searchParams.value = {
     ...initSearchParams,
     text: route.query.text as string,
   };
 });
+
+const loadDataAll = (params: any) => {
+  const query = {
+    ...params,
+    searchText: params.text,
+  };
+  MyAxios.post("/search/all", query).then((res: any) => {
+    postList.value = res.postList;
+    userList.value = res.userList;
+    pictureList.value = res.pictureList;
+  });
+};
+
+loadDataAll(initSearchParams);
+
 const onTabChange = (key: string) => {
   router.push({
     path: `${key}`,
@@ -73,11 +73,13 @@ const onTabChange = (key: string) => {
   });
 };
 
-const onSearch = () => {
+const onSearch = (value: string) => {
   router.push({
     query: {
-      text: searchParams.value.text,
+      ...searchParams.value,
+      text: value,
     },
   });
+  loadDataAll(value);
 };
 </script>

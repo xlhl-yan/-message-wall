@@ -6,6 +6,7 @@ import com.yupi.springbootinit.common.ErrorCode;
 import com.yupi.springbootinit.exception.BusinessException;
 import com.yupi.springbootinit.model.entity.Picture;
 import com.yupi.springbootinit.service.PictureService;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,6 +25,7 @@ import java.util.Map;
  * @description
  */
 @Service
+@Slf4j
 public class PictureServiceImpl implements PictureService {
 
     @Override
@@ -37,7 +39,10 @@ public class PictureServiceImpl implements PictureService {
         } catch (IOException e) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "无法获取到数据");
         }
-        Elements elements = doc.select("div[class=iuscp isv]");
+        Elements elements = doc.select("div[class=iuscp varh isv]").size() == 0 ?
+                doc.select("div[class=iuscp isv]") :
+                doc.select("div[class=iuscp varh isv]");
+
         ArrayList<Picture> pictures = new ArrayList<>();
 
         for (Element element : elements) {
@@ -55,6 +60,7 @@ public class PictureServiceImpl implements PictureService {
             picture.setUrl(murl);
             picture.setTitle(title);
             pictures.add(picture);
+            log.info("点击链接跳转至图片详情=>{}", murl);
             if (pictures.size() >= pageSize) {
                 break;
             }

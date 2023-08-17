@@ -9,7 +9,6 @@ import com.yupi.springbootinit.model.dto.picture.PictureQueryRequest;
 import com.yupi.springbootinit.model.entity.Picture;
 import com.yupi.springbootinit.service.PictureService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,8 +42,6 @@ public class PictureController {
         String searchText = pictureQueryRequest.getSearchText();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-
-        ThrowUtils.throwIf(StringUtils.isBlank(searchText), ErrorCode.PARAMS_ERROR);
 
         return ResultUtils.success(pictureService.searchPicture(searchText, current, size));
     }

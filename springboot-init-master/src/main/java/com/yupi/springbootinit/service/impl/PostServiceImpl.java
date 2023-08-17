@@ -22,14 +22,6 @@ import com.yupi.springbootinit.model.vo.UserVO;
 import com.yupi.springbootinit.service.PostService;
 import com.yupi.springbootinit.service.UserService;
 import com.yupi.springbootinit.utils.SqlUtils;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -46,6 +38,11 @@ import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 帖子服务实现
@@ -273,8 +270,8 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         Map<Long, List<User>> userIdUserListMap = userService.listByIds(userIdSet).stream()
                 .collect(Collectors.groupingBy(User::getId));
         // 2. 已登录，获取用户点赞、收藏状态
-        Map<Long, Boolean> postIdHasThumbMap = new HashMap<>();
-        Map<Long, Boolean> postIdHasFavourMap = new HashMap<>();
+        Map<Long, Boolean> postIdHasThumbMap = new HashMap<>(16);
+        Map<Long, Boolean> postIdHasFavourMap = new HashMap<>(16);
         User loginUser = userService.getLoginUserPermitNull(request);
         if (loginUser != null) {
             Set<Long> postIdSet = postList.stream().map(Post::getId).collect(Collectors.toSet());
@@ -307,6 +304,16 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         }).collect(Collectors.toList());
         postVOPage.setRecords(postVOList);
         return postVOPage;
+    }
+
+    @Override
+    public Page<PostVO> listPostVoByPage(PostQueryRequest postQueryRequest, HttpServletRequest request) {
+        long current = postQueryRequest.getCurrent();
+        long size = postQueryRequest.getPageSize();
+
+        Page<Post> postPage = this.page(new Page<>(current, size),
+                this.getQueryWrapper(postQueryRequest));
+        return this.getPostVOPage(postPage, request);
     }
 
 }

@@ -2,6 +2,8 @@ package com.yupi.springbootinit.model.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * Picture
  *
@@ -10,7 +12,9 @@ import lombok.Data;
  * @description 图片返回包装实体类
  */
 @Data
-public class Picture {
+public class Picture implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
      * 标题
      */
