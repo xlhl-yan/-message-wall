@@ -1,16 +1,16 @@
 <template>
   <div class="indexPage">
     <a-input-search
-      v-model:value="searchParams.text"
-      placeholder="input search text"
-      enter-button="Search"
+      v-model:value="searchText"
+      placeholder="请输入关键字"
+      enter-button="搜索"
       size="large"
       @search="onSearch"
     />
     <MySeparator />
     <a-tabs v-model:activeKey="activeKey" @change="onTabChange">
       <a-tab-pane key="Article" tab="文章">
-        <ArticlePage :postList="postList" />
+        <PostList :postList="postList" />
       </a-tab-pane>
       <a-tab-pane key="Picture" tab="图片">
         <PictureList :pictureList="pictureList" />
@@ -23,13 +23,14 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect, ref, onMounted } from "vue";
-import ArticlePage from "@/components/ArticleList.vue";
+import { watchEffect, ref } from "vue";
+import PostList from "@/components/PostList.vue";
 import UserList from "@/components/UserList.vue";
 import PictureList from "@/components/PictureList.vue";
 import MySeparator from "@/components/MySeparator.vue";
 import { useRoute, useRouter } from "vue-router";
 import MyAxios from "@/plugins/MyAxios";
+import { message } from "ant-design-vue";
 
 const postList = ref([]);
 const userList = ref([]);
@@ -41,36 +42,7 @@ const initSearchParams = {
   text: "",
   pageSize: 10,
   pageNumber: 1,
-};
-const searchParams = ref(initSearchParams);
-watchEffect(() => {
-  searchParams.value = {
-    ...initSearchParams,
-    text: route.query.text as string,
-  };
-});
-
-const loadDataAll = (params: any) => {
-  const query = {
-    ...params,
-    searchText: params.text,
-  };
-  MyAxios.post("/search/all", query).then((res: any) => {
-    postList.value = res.postList;
-    userList.value = res.userList;
-    pictureList.value = res.pictureList;
-  });
-};
-
-loadDataAll(initSearchParams);
-
-const onTabChange = (key: string) => {
-  router.push({
-    path: `${key}`,
-    query: {
-      text: searchParams.value.text,
-    },
-  });
+  type: activeKey,
 };
 
 const onSearch = (value: string) => {
@@ -80,6 +52,67 @@ const onSearch = (value: string) => {
       text: value,
     },
   });
-  loadDataAll(value);
+};
+const searchText = ref(route.query.text || "");
+
+const searchParams = ref(initSearchParams);
+
+/**
+ * 获取全部数据
+ * @param params
+ */
+const loadDataAll = (params: any) => {
+  const query = {
+    ...params,
+    searchText: params.text,
+    type: "All",
+  };
+  MyAxios.post("/search/all", query).then((res: any) => {
+    postList.value = res.postList;
+    userList.value = res.userList;
+    pictureList.value = res.pictureList;
+  });
+};
+
+/**
+ * 获取单一数据源
+ * @param params
+ */
+const loadData = (params: any) => {
+  const { type = "post" } = params;
+  if (!type) {
+    message.error("type is null");
+    return;
+  }
+  const query = {
+    ...params,
+    searchText: params.text,
+  };
+  MyAxios.post("/search/all", query).then((res: any) => {
+    if (type === "Article") {
+      postList.value = res.dataList;
+    } else if (type === "User") {
+      userList.value = res.dataList;
+    } else if (type === "Picture") {
+      pictureList.value = res.dataList;
+    }
+  });
+};
+watchEffect(() => {
+  searchParams.value = {
+    ...searchParams,
+    text: route.query.text,
+    type: route.params.category,
+  };
+  loadData(searchParams.value);
+});
+
+const onTabChange = (key: string) => {
+  router.push({
+    path: `/${key}`,
+    query: {
+      text: searchParams.value.text,
+    },
+  });
 };
 </script>

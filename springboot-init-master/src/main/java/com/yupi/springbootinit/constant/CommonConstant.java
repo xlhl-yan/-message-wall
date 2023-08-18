@@ -17,5 +17,14 @@ public interface CommonConstant {
      * 降序
      */
     String SORT_ORDER_DESC = " descend";
-    
+
+    /**
+     * 搜索图片分类缓存
+     */
+    String SEARCH_TYPE_KEY = "search_type_cache_key";
+
+    /**
+     * redis过期时间
+     */
+    Integer REDIS_KEY_TTL = 1000 * 60 * 60 * 24;
 }

@@ -145,6 +145,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         long pageSize = postQueryRequest.getPageSize();
         String sortField = postQueryRequest.getSortField();
         String sortOrder = postQueryRequest.getSortOrder();
+
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         // 过滤
         boolQueryBuilder.filter(QueryBuilders.termQuery("isDelete", 0));
@@ -175,7 +176,6 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         // 按关键词检索
         if (StringUtils.isNotBlank(searchText)) {
             boolQueryBuilder.should(QueryBuilders.matchQuery("title", searchText));
-            boolQueryBuilder.should(QueryBuilders.matchQuery("description", searchText));
             boolQueryBuilder.should(QueryBuilders.matchQuery("content", searchText));
             boolQueryBuilder.minimumShouldMatch(1);
         }

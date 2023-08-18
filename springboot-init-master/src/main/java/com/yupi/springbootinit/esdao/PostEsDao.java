@@ -1,16 +1,30 @@
 package com.yupi.springbootinit.esdao;
 
 import com.yupi.springbootinit.model.dto.post.PostEsDTO;
-import java.util.List;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
+import java.util.List;
+
 /**
- * 帖子 ES 操作
+ * ES 操作 帖子
  *
- * @author <a href="https://github.com/liyupi">程序员鱼皮</a>
- * @from <a href="https://yupi.icu">编程导航知识星球</a>
+ * @author xlhl
  */
 public interface PostEsDao extends ElasticsearchRepository<PostEsDTO, Long> {
 
+    /**
+     * 根据创建人查询帖子信息
+     *
+     * @param userId
+     * @return
+     */
     List<PostEsDTO> findByUserId(Long userId);
+
+    /**
+     * 根据标签查询帖子
+     *
+     * @param title
+     * @return
+     */
+    List<PostEsDTO> findByTitle(String title);
 }

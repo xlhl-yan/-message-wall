@@ -124,6 +124,7 @@ public interface UserService extends IService<User> {
      * 分页搜索用户
      *
      * @param userQueryRequest
+     * @return
      */
     Page<UserVO> listUser(UserQueryRequest userQueryRequest);
 }

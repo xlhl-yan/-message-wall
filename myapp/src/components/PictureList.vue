@@ -10,7 +10,7 @@
           <template #cover>
             <a :href="item.url">
               <img
-                style="width: 100px; height: 100px"
+                style="width: 100%; height: 100%"
                 alt="example"
                 :src="item.url"
               />

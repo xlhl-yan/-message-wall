@@ -15,6 +15,8 @@ public interface PostMapper extends BaseMapper<Post> {
 
     /**
      * 查询帖子列表（包括已被删除的数据）
+     * @param minUpdateTime 指定时间
+     * @return 帖子列表
      */
     List<Post> listPostWithDelete(Date minUpdateTime);
 
