@@ -4,9 +4,12 @@ import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.yupi.springbootinit.model.dto.post.PostEsDTO;
 import com.yupi.springbootinit.model.entity.Picture;
 import com.yupi.springbootinit.model.entity.Post;
 import com.yupi.springbootinit.service.PostService;
+import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,6 +17,10 @@ import org.jsoup.select.Elements;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -32,6 +39,18 @@ public class CrawlerTest {
     @Resource
     private PostService postService;
 
+    @Resource
+    private ElasticsearchRestTemplate elasticsearchRestTemplate;
+
+    @Test
+    void testRestTemplate() {
+        MatchQueryBuilder queryBuilder = QueryBuilders.matchQuery("content", "AzurLane");
+        NativeSearchQuery build = new NativeSearchQueryBuilder().withQuery(queryBuilder).build();
+
+
+        SearchHits<PostEsDTO> search = elasticsearchRestTemplate.search(build, PostEsDTO.class);
+        System.out.println("search = " + search);
+    }
 
     /**
      * jsoup测试

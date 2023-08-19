@@ -10,6 +10,9 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 
+/**
+ * Canal测试案例
+ */
 public class SimpleCanalClientExample {
 
 

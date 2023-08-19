@@ -21,8 +21,8 @@ import java.util.List;
  *
  * @author xlhl
  **/
-@Document(indexName = "post")
 @Data
+@Document(indexName = "post")
 public class PostEsDTO implements Serializable {
 
     /**
@@ -39,21 +39,25 @@ public class PostEsDTO implements Serializable {
     /**
      * 标题
      */
+    @Field("title")
     private String title;
 
     /**
      * 内容
      */
+    @Field("content")
     private String content;
 
     /**
      * 标签列表
      */
+    @Field("tags")
     private List<String> tags;
 
     /**
      * 创建用户 id
      */
+    @Field("userId")
     private Long userId;
 
     /**
@@ -71,6 +75,7 @@ public class PostEsDTO implements Serializable {
     /**
      * 是否删除
      */
+    @Field("isDelete")
     private Integer isDelete;
 
     private static final long serialVersionUID = 1L;

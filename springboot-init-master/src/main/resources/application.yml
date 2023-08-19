@@ -39,6 +39,11 @@ spring:
     multipart:
       # 大小限制
       max-file-size: 10MB
+# Elasticsearch日志打印
+logging:
+  level:
+    org.springframework.data.elasticsearch.core: debug
+    org.springframework.data.elasticsearch.client.WIRE: TRACE
 server:
   address: 0.0.0.0
   port: 8101

@@ -1,0 +1,55 @@
+// ES查询文章搜索语句
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "id": {
+              "value": "{id}"
+            },
+            "tags": {
+              "value": "{tags}"
+            }
+          },
+          "match": {
+             "title": {
+              "value":"{title}"
+            },
+            "content": {
+              "value":"{content}"
+            }
+          }
+        }
+      ],
+      "should": [
+        {
+          "match": {
+            "title": "{searchText}",
+            "content": "{searchText}",
+            "tags": "{orTag}"
+          }
+        }
+      ],
+      "filter": [
+        {
+          "term": {
+            "userId": "{userId}",
+            "isDelete": 0,
+            "id": "{notId}"
+          }
+        }
+      ]
+    }
+  },
+  "highlight": {}, //todo 搜索关键词高亮
+  "from": "{current}",
+  "size": "{pageSize}",
+  "sort": [
+    {
+      "{sortField}": {
+        "order": "{sortOrder}"
+      }
+    }
+  ]
+}
